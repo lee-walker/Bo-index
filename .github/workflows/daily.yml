@@ -1,1 +1,81 @@
-placeholder
+name: Daily Momentum Update
+
+on:
+  schedule:
+    # UTC 23:50 周一至周五 = 北京时间 07:50 周二至周六
+    # ⚠️ 不要写成 '50 7 * * 2-6'，那实际是北京时间 15:50 且星期错位
+    # ⚠️ 不要安排整点，整点是 GitHub 调度最拥堵的时段
+    - cron: '50 23 * * 1-5'
+  workflow_dispatch: {}   # 手动触发：调试用，也是失活后的恢复手段
+
+# 默认 token 无 push 权限，必须显式声明，否则 git push 报 403
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-momentum
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # 交易日判定与计算在同一脚本内完成：
+      # 若前一交易日为美股休市日，compute.py 会提前退出并写入 skip.json，
+      # 后续的推送与提交步骤会被自动跳过（脚本自行判断，无需工作流干预）。
+      - name: Compute indicators
+        id: compute
+        env:
+          # Alpha Vantage 备用源 key（可选，未配置则跳过该级降级）
+          AV_API_KEY: ${{ secrets.AV_API_KEY }}
+        run: python scripts/compute.py
+
+      # 休市日跳过推送：用文件存在性判断，比在 shell 里解析 JSON 更稳
+      - name: Check trading day
+        id: check
+        run: |
+          if [ -f docs/data/skip.json ]; then
+            echo "skipped=true" >> "$GITHUB_OUTPUT"
+            echo "::notice title=休市跳过::前一交易日为美股休市日，本次不推送"
+          else
+            echo "skipped=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Notify via Bark
+        if: steps.check.outputs.skipped != 'true'
+        env:
+          # ⚠️ secrets 必须显式映射进 env，脚本内才能通过 os.environ 读到
+          BARK_URL: ${{ secrets.BARK_URL }}
+          DASHBOARD_URL: ${{ vars.DASHBOARD_URL }}
+        run: python scripts/notify.py
+
+      - name: Commit results
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # skip.json 是单次运行的瞬时标记（已在 .gitignore 中），
+          # 这里再显式排除一次，避免它被提交后污染下次的跳过判定。
+          git add docs/data/
+          git reset --quiet docs/data/skip.json 2>/dev/null || true
+          if git diff --staged --quiet; then
+            echo "无数据变更，跳过提交"
+          else
+            git commit -m "data: update $(date -u +'%Y-%m-%d')"
+            git push
+          fi
