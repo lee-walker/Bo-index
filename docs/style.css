@@ -1,0 +1,398 @@
+/* Bo 配对动能指标 — 看板样式
+ * 移动端优先（用户多从 Bark 通知点入）
+ *
+ * 配色约定（重要）：
+ *   进攻/防守是「资产轮动方向」而非涨跌，因此用蓝/橙/灰，不用红绿。
+ *   只有标的单日涨跌幅才是真正的涨跌，那一处才用红涨绿跌。
+ */
+
+:root {
+  /* 状态语义色 */
+  --c-offensive: #165DFF;   /* 进攻：蓝 */
+  --c-defensive: #FF7D00;   /* 防守：橙 */
+  --c-neutral:   #86909C;   /* 分歧：灰 */
+
+  /* 国内惯例：涨红跌绿（仅用于标的单日涨跌幅） */
+  --c-up:   #E5362B;
+  --c-down: #12A150;
+
+  /* 中性色 */
+  --bg:        #F5F6F8;
+  --card:      #FFFFFF;
+  --text:      #1D2129;
+  --text-sub:  #4E5969;
+  --text-weak: #86909C;
+  --line:      #E5E6EB;
+  --radius:    14px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC",
+               "Helvetica Neue", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 12px 12px 32px;
+}
+
+/* ---------- 卡片 ---------- */
+
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-sub);
+  margin-bottom: 12px;
+}
+
+/* ---------- 状态卡 ---------- */
+
+.hero {
+  text-align: center;
+  padding: 24px 16px;
+  transition: background-color .3s;
+}
+
+.hero-label {
+  font-size: 13px;
+  color: var(--text-weak);
+  margin-bottom: 6px;
+}
+
+.hero-state {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.hero-date {
+  font-size: 13px;
+  color: var(--text-weak);
+  margin-bottom: 16px;
+}
+
+.hero-channels {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.channel {
+  flex: 1;
+  max-width: 150px;
+  background: rgba(255, 255, 255, .16);
+  border-radius: 10px;
+  padding: 10px 8px;
+}
+
+.channel-name {
+  font-size: 12px;
+  opacity: .8;
+  margin-bottom: 2px;
+}
+
+.channel-val {
+  font-size: 18px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 状态配色：进攻=蓝 / 防守=橙 / 分歧=灰 */
+.hero.s-offensive { background: var(--c-offensive); color: #fff; }
+.hero.s-defensive { background: var(--c-defensive); color: #fff; }
+.hero.s-neutral   { background: var(--c-neutral);   color: #fff; }
+.hero.s-unknown   { background: #C9CDD4;            color: #fff; }
+
+.hero.s-offensive .hero-label,
+.hero.s-offensive .hero-date,
+.hero.s-defensive .hero-label,
+.hero.s-defensive .hero-date,
+.hero.s-neutral   .hero-label,
+.hero.s-neutral   .hero-date { color: rgba(255, 255, 255, .82); }
+
+/* ---------- 降级提示 ---------- */
+
+.banner {
+  background: #FFF7E8;
+  border: 1px solid #FFCF8B;
+  color: #A65C00;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+/* ---------- 标的报价 ---------- */
+
+.quotes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.quote {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  background: #FAFBFC;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.quote-sym {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-sub);
+}
+
+.quote-right { text-align: right; }
+
+.quote-price {
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.quote-chg {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 涨红跌绿（国内惯例，此处确实是涨跌） */
+.up   { color: var(--c-up); }
+.down { color: var(--c-down); }
+.flat { color: var(--text-weak); }
+
+/* ---------- KO 表盘 ---------- */
+
+.gauge-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 14px;
+  color: var(--text-sub);
+  margin-bottom: 8px;
+}
+
+.gauge-head strong {
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.gauge-track {
+  position: relative;
+  height: 12px;
+  background: #F2F3F5;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/* 进度条从左侧 -7% 起算，宽度由 JS 按映射轴定位。
+   注意此处不能用 border-radius 包裹整条，否则在中间位置会显得圆头突兀，
+   改用左圆角 + 增长方向自然收边。 */
+.gauge-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 6px 0 0 6px;
+  background: var(--c-offensive);
+  transition: width .5s ease, background-color .3s;
+}
+
+.gauge-fill.alert { background: var(--c-defensive); }
+
+/* 零轴刻度（映射轴中点） */
+.gauge-zero {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: var(--text);
+  opacity: .22;
+}
+
+/* 阈值刻度，位于映射轴最右端 */
+.gauge-threshold {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 100%;
+  width: 2px;
+  background: var(--text);
+  opacity: .45;
+}
+
+.gauge-foot {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-weak);
+  margin-top: 6px;
+}
+
+.ko-status {
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  padding: 8px;
+  border-radius: 8px;
+  background: #F2F3F5;
+  color: var(--text-sub);
+}
+
+.ko-status.alert { background: #FFF1E8; color: #A65C00; }
+
+/* ---------- 图表 ---------- */
+
+.range-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.range-tabs button {
+  flex: 0 0 auto;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--text-sub);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .15s;
+}
+
+.range-tabs button.active {
+  background: var(--c-offensive);
+  border-color: var(--c-offensive);
+  color: #fff;
+  font-weight: 600;
+}
+
+.chart-hint {
+  font-size: 12px;
+  color: var(--text-weak);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  margin-left: 8px;
+}
+
+.dot:first-child { margin-left: 0; }
+.dot-off { background: rgba(22, 93, 255, .14); }
+.dot-def { background: rgba(255, 125, 0, .14); }
+
+.chart { width: 100%; height: 240px; }
+.chart-sub { height: 200px; margin-top: 4px; }
+
+/* ---------- 表格 ---------- */
+
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+th {
+  text-align: right;
+  font-weight: 600;
+  color: var(--text-weak);
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+th:first-child, td:first-child { text-align: left; }
+
+td {
+  text-align: right;
+  padding: 9px 6px;
+  border-bottom: 1px solid #F7F8FA;
+  color: var(--text-sub);
+}
+
+tbody tr:last-child td { border-bottom: none; }
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.badge.offensive { background: var(--c-offensive); }
+.badge.defensive { background: var(--c-defensive); }
+.badge.neutral   { background: var(--c-neutral); }
+
+/* ---------- 免责声明 ---------- */
+
+.disclaimer { background: #FAFBFC; }
+
+.disclaimer .card-title { color: var(--text-sub); }
+
+.disclaimer ol {
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.75;
+  color: var(--text-weak);
+}
+
+.disclaimer li { margin-bottom: 6px; }
+
+.disclaimer li:last-child { margin-bottom: 0; }
+
+/* ---------- 页脚 ---------- */
+
+.foot {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-weak);
+  padding: 8px 0 0;
+  line-height: 1.8;
+}
+
+/* ---------- 桌面端微调 ---------- */
+
+@media (min-width: 560px) {
+  .quotes { grid-template-columns: repeat(4, 1fr); }
+  .chart { height: 300px; }
+  .chart-sub { height: 240px; }
+}

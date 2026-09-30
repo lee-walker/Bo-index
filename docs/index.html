@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>美股配对动能指标</title>
+<link rel="stylesheet" href="./style.css">
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+</head>
+<body>
+
+<main class="wrap">
+
+  <!-- 区块 1：状态卡 -->
+  <section class="card hero" id="hero">
+    <div class="hero-label">当前状态</div>
+    <div class="hero-state" id="heroState">加载中…</div>
+    <div class="hero-date" id="heroDate">—</div>
+    <div class="hero-channels" id="heroChannels"></div>
+  </section>
+
+  <div class="banner" id="degradedBanner" hidden>
+    ⚠️ 数据源异常，当前展示为上次成功结果
+  </div>
+
+  <!-- 区块 2：标的报价 -->
+  <section class="card">
+    <h2 class="card-title">标的收盘</h2>
+    <div class="quotes" id="quotes"></div>
+  </section>
+
+  <!-- 区块 3：KO 监测 -->
+  <section class="card">
+    <h2 class="card-title">KO 极端避险监测</h2>
+    <div class="gauge-head">
+      <span>近 20 交易日累计涨幅</span>
+      <strong id="koValue">—</strong>
+    </div>
+    <div class="gauge-track">
+      <div class="gauge-fill" id="koFill"></div>
+      <div class="gauge-zero"></div>
+      <div class="gauge-threshold" id="koThreshold"></div>
+    </div>
+    <div class="gauge-foot">
+      <span>-7%</span>
+      <span class="gauge-thr-label">阈值 +7.00%</span>
+    </div>
+    <div class="ko-status" id="koStatus">—</div>
+  </section>
+
+  <!-- 区块 4：历史走势 -->
+  <section class="card">
+    <h2 class="card-title">历史走势</h2>
+    <div class="range-tabs" id="rangeTabs">
+      <button data-days="22">1月</button>
+      <button data-days="66">3月</button>
+      <button data-days="132">6月</button>
+      <button data-days="250" class="active">1年</button>
+      <button data-days="0">全部</button>
+    </div>
+    <div class="chart-hint">
+      <span class="dot dot-off"></span> 进攻区间
+      <span class="dot dot-def"></span> 防守区间
+    </div>
+    <div id="mainChart" class="chart"></div>
+    <div id="subChart" class="chart chart-sub"></div>
+  </section>
+
+  <!-- 区块 5：近 5 日动态 -->
+  <section class="card">
+    <h2 class="card-title">近 5 个交易日</h2>
+    <div class="table-scroll">
+      <table id="trendTable">
+        <thead>
+          <tr><th>日期</th><th>VTV 信号</th><th>CGDV 信号</th><th>状态</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 区块 6：免责声明（常驻，不可折叠）-->
+  <section class="card disclaimer">
+    <h2 class="card-title">免责声明</h2>
+    <ol>
+      <li>本页面所展示的全部数据与指标，均为基于公开市场行情数据的客观计算结果。</li>
+      <li>本页面对指标状态的描述（如「进攻阶段」「防守阶段」）仅指资产类别间的相对强弱方向，不构成对任何证券涨跌的判断或预测。</li>
+      <li>本页面不提供、也不构成任何投资建议、投资咨询或交易指令，不针对任何特定个人的财务状况与投资目标。</li>
+      <li>历史数据与指标信号不代表未来表现，据此操作的风险由使用者自行承担。</li>
+      <li>数据来源于第三方公开接口，可能存在延迟、缺失或错误，本页面不对其准确性、完整性和及时性作出保证。</li>
+      <li>使用者应独立判断并自行决策，必要时应咨询具备相应资质的专业人士。</li>
+    </ol>
+  </section>
+
+  <footer class="foot" id="foot">数据加载中…</footer>
+
+</main>
+
+<script src="./app.js"></script>
+</body>
+</html>
