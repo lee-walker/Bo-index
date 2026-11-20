@@ -1,49 +1,55 @@
 {
   "schemaVersion": 2,
-  "tradeDate": "2026-11-18",
-  "prevTradeDate": "2026-11-17",
-  "generatedAt": "2026-11-19T04:35:09Z",
+  "tradeDate": "2026-11-19",
+  "prevTradeDate": "2026-11-18",
+  "generatedAt": "2026-11-20T04:23:20Z",
   "dataSource": "yfinance",
   "isDegraded": false,
   "regime": "DEFENSIVE",
   "regimeText": "防守阶段（防御端主导）",
   "crossoverEvent": "NONE",
   "koAlert": {
-    "roc20": 5.84,
+    "roc20": 0.79,
     "isTriggered": false,
     "threshold": 7.0
   },
   "quotes": {
     "QQQ": {
-      "price": 659.51,
-      "changePct": 0.39
+      "price": 645.04,
+      "changePct": -2.19
     },
     "VTV": {
-      "price": 221.25,
-      "changePct": -1.18
+      "price": 217.75,
+      "changePct": -1.58
     },
     "CGDV": {
       "price": 47.06,
-      "changePct": -0.06
+      "changePct": 0.0
     },
     "KO": {
-      "price": 98.09,
-      "changePct": -0.71
+      "price": 96.09,
+      "changePct": -2.04
     }
   },
   "indicators": {
     "vtvPair": {
-      "ratio": 0.3355,
-      "roc20": 8.16,
-      "signal": 9.29
+      "ratio": 0.3376,
+      "roc20": 4.97,
+      "signal": 7.85
     },
     "cgdvPair": {
-      "ratio": 0.0714,
-      "roc20": 5.22,
-      "signal": 5.19
+      "ratio": 0.073,
+      "roc20": 5.41,
+      "signal": 5.26
     }
   },
   "recentTrend": [
+    {
+      "date": "2026-11-19",
+      "vtvSignal": 7.85,
+      "cgdvSignal": 5.26,
+      "state": "DEFENSIVE"
+    },
     {
       "date": "2026-11-18",
       "vtvSignal": 9.29,
@@ -66,12 +72,6 @@
       "date": "2026-11-13",
       "vtvSignal": 10.02,
       "cgdvSignal": 5.45,
-      "state": "DEFENSIVE"
-    },
-    {
-      "date": "2026-11-12",
-      "vtvSignal": 11.41,
-      "cgdvSignal": 6.36,
       "state": "DEFENSIVE"
     }
   ]
